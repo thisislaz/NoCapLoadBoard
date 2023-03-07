@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to NoCapLoadBoard!!</title>
+  <script src="https://kit.fontawesome.com/eb2c2d28d2.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+
+    <header class="nav_bar">
+      <div class="left_nav">
+        <h2><a href="/">{{cap(shipper.company_name)}}</a></h2>
+      </div>
+      <ul class="right_nav">
+        <li><a href="/">Home</a></li> |
+        <li><a href="/shipper/add_load">Post Loads</a></li> |
+        <li><a href="/find_trucks">Find Trucks</a></li> |
+        {% if session['user_id'] %}
+            <li><a href="/logout">Logout</a></li>
+        {% else %}
+            <li><a href="/login">Login</a></li>
+        {% endif %}
+      </ul>
+    </header>
+
+    <main class="main_background">
+
+      <div class="body_div white_bg">
+        <h1>Post your load</h1>
+      </div>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="body_div flashes">
+            {{message}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="removeDiv(this)">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+      <div class="body_div">
+        <h3 class="red">* required fields</h3><br>
+        <form class="form_inline" action="/shipper/{{load.load_id}}/update" method="post">
+          <div class="truck_form">
+            <div class="radius_div">
+              <label for="origin_city">Origin City</label>
+              <input type="text" name="origin_city" id="origin_city" value="{{load.origin_city}}">
+            </div>
+            <div class="radius_div">
+              <label for="origin_state">Origin State <span class="red">*</span></label>
+              <select name="origin_state" id="origin_state">
+                <option selected value="{{load.origin_state}}">{{load.origin_state|upper}}</option>
+              {% for s in states %}
+                  {% if s == "ANY" %}
+                  <option hidden></option>
+                  {% else %}
+                    <option value="{{s}}">{{s}}</option>
+                  {% endif %}
+              {% endfor %}
+              </select>
+            </div>
+            <div class="radius_div">
+              <label for="pickup_date">Pickup date <span class="red">*</span></label>
+              <input type="date" name="pickup_date" id="pickup_date" value="{{load.pickup_date}}">
+            </div>
+            <div class="radius_div">
+              <label for="destination_city">Destination City</label>
+              <input type="text" name="destination_city" id="destination_city" value="{{load.destination_city}}">
+            </div>
+            <div class="radius_div">
+              <label for="destination_state">Destination State <span class="red">*</span></label>
+              <select name="destination_state" id="destination_state">
+                <option selected value="{{load.destination_state}}">{{load.destination_state|upper}}</option>
+                  {% for s in states %}
+                  {% if s == "ANY" %}
+                  <option hidden></option>
+                  {% else %}
+                    <option value="{{s}}">{{s}}</option>
+                  {% endif %}
+              {% endfor %}
+              </select>
+            </div>
+            <div class="radius_div">
+              <label for="delivery_date">Delivery date <span class="red">*</span></label>
+              <input type="date" name="delivery_date" id="delivery_date" value="{{load.delivery_date}}">
+            </div>
+          </div>
+          <div>
+            <label for="load_number">Load reference id</label>
+            <input type="text" name="load_number" id="load_number" value="{{load.load_number}}">
+            <label for="equipment_type">Equipment type <span class="red">*</span></label>
+            <select name="equipment_type" id="equipment_type">
+              <option selected value="{{load.equipment_type}}">
+                {% if load.equipment_type|int == 1 %}
+                Van
+                {% elif load.equipment_type|int == 2 %}
+                Reefer
+                {% elif load.equipment_type|int == 3 %}
+                Flatbed
+                {% endif %}
+              </option>
+              <option value="1">Van</option>
+              <option value="2">Reefer</option>
+              <option value="3">Flatbed</option>
+            </select>
+            <label for="weight">Weight</label>
+            <input type="number" name="weight" id="weight" value="{{load.weight}}">
+            <label for="length">Required equipment length <span class="red">*</span></label>
+            <select name="length" id="length">
+              <option selected value="{{load.length}}">
+                {% if load.length|int == 1 %}
+                48
+                {% elif load.length|int == 2 %}
+                53
+                {% elif load.length|int == 3 %}
+                Other
+                {% endif %}
+              </option>
+              <option value="1">48</option>
+              <option value="2">53</option>
+              <option value="3">Other</option>
+            </select>
+            <label for="rate_per_mile">Rate per mile</label>
+            <input type="text" name="rate_per_mile" id="rate_per_mile" value="{{load.rate_per_mile}}">
+            <label for="size">Load size <span class="red">*</span></label>
+            <select name="size" id="size">
+              <option selected value="{{load.size}}">
+                {% if load.size|int == 1 %}
+                LTL
+                {% elif load.size|int == 2 %}
+                FTL
+                {% elif load.size|int == 3 %}
+                OD
+                {% endif %}
+              </option>
+              <option value="1">LTL</option>
+              <option value="2">FTL</option>
+              <option value="3">OD</option>
+            </select>
+          </div>
+          <br>
+          <div>
+            <button>Submit</button>
+          </div>
+        </form>
+        <br><br>
+        {% if "broker_id" in session or "carrier_id" in session %}
+            <a class="green" href="/find_trucks">
+              <button class="button-85" role="button">Back</button>
+            </a>
+          {% elif 'shipper_id' in session %}
+            <a class="green" href="/shipper/dashboard">
+              <button class="button-85" role="button">Back</button>
+            </a>
+          {% endif %}
+          <br><br>
+      </div>
+    </main>
+
+      <footer id="footer ">
+    <nav id="nav_bar_footer" class="nav_bar ">
+      <div class="left_nav">
+        <h2><a href="/">NoCapLoadBoard</a></h2>
+      </div>
+      <ul class="right_nav">
+        <li>Contact me<i class="fa-solid fa-person-walking-arrow-right"></i></li>
+        <li><a href="mailto:laz@thisislaz.net?&subject=Hello!&body=Say hello!"><i class="fa-solid fa-envelope"></i></a></li> |
+        <li><a href="https://www.instagram.com/itsthejourneylak" target="_blank"><i class="fa-brands fa-instagram"></i></a></li> |
+        <li><a href="https:/www.linkedin.com/in/laz-alvarez/" target="_blank"><i class="fa-brands fa-linkedin"></i></a></li> |
+        <li><a href="https:/github.com/thisislaz" target="_blank"><i class="fa-brands fa-github"></i></a></li>
+      </ul>
+    </nav>
+  </footer>
+
+
+</body>
+<script src="/static/js/script.js"></script>
+
+</html>

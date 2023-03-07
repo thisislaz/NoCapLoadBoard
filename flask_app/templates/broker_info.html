@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to NoCapLoadBoard!!</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://kit.fontawesome.com/eb2c2d28d2.js" crossorigin="anonymous"></script>
+
+</head>
+
+<body >
+  
+    <header class="nav_bar">
+
+      <div class="left_nav">
+        <h2><a href="/">NoCapLoadBoard</a></h2>
+      </div>
+      <ul class="right_nav">
+        <li><a href="/">Home</a></li> |
+        
+        {% if session['user_id'] %}
+          <li><a href="/start_over">Start Over</a></li> |
+          <li><a href="/logout">Logout</a></li>
+        {% else %}
+            <li><a href="/login">Login</a></li>
+        {% endif %}
+      </ul>
+
+    </header>
+
+    <main class="main_background">
+      <div class="body_div">
+        <section class="body_div">
+          <p>Welcome, brokers! If you're looking to join our network of freight carriers, please fill out the form below to create your account. It only takes a few minutes! Make sure to provide accurate and up-to-date information for your company name, phone number, address, and US DOT/MC numbers. Once you submit the form, we'll review your application and get in touch with you as soon as possible. Thank you for choosing our load board to find the best shipping solutions for your clients. We're excited to have you on board!</p>
+        </section>
+        <h1>Enter company info</h1>
+        <h3 class="red">* required fields</h3>
+        {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="body_div flashes">
+            {{message}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="removeDiv(this)">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+        <form class="form_inline" action="/broker/register" method="post">
+          <label for="company_name">Company Name <span class="red">*</span></label>
+          <input type="text" name="company_name" id="company_name">
+          <label for="company_phone">Company Phone <span class="red">*</span></label>
+          <input type="text" name="company_phone" id="company_phone">
+          <label for="address_line_one">Address line one <span class="red">*</span></label>
+          <input type="text" name="address_line_one" id="address_line_one">
+          <label for="address_line_two">Address line two</label>
+          <input type="text" name="address_line_two" id="address_line_two">
+          <label for="city">City <span class="red">*</span></label>
+          <input type="text" name="city" id="city">
+          <label for="state">State <span class="red">*</span></label>
+          <select name="state" id="state">
+            <option hidden selected value>
+            {% for s in states%}
+            {% if s == 'ANY' %}
+              <option hidden>
+            {% else %}
+              <option value="{{s}}">{{s}}</option>
+            {% endif %}
+              {% endfor %}
+          </select>
+          <label for="postal_code">Postal Code <span class="red">*</span></label>
+          <input type="text" name="postal_code" id="postal_code">
+          <label for="us_dot">US DOT Number <span class="asterisk">*</span></label>
+          <input type="text" name="us_dot" id="us_dot">
+          <label for="mc_number">MC/FF Number <span class="red">*</span></label>
+          <input type="text" name="mc_number" id="mc_number">
+          <div>
+            <button>Submit</button>
+          </div>
+        </form>
+        <section class="body_div">
+          <p>Welcome, brokers! If you're looking to join our network of freight carriers, please fill out the form below to create your account. It only takes a few minutes! Make sure to provide accurate and up-to-date information for your company name, phone number, address, and US DOT/MC numbers. Once you submit the form, we'll review your application and get in touch with you as soon as possible. Thank you for choosing our load board to find the best shipping solutions for your clients. We're excited to have you on board!</p>
+        </section>
+      </div>
+    </main>
+
+  
+      <footer id="footer ">
+    <nav id="nav_bar_footer" class="nav_bar ">
+      <div class="left_nav">
+        <h2><a href="/">NoCapLoadBoard</a></h2>
+      </div>
+      <ul class="right_nav">
+        <li>Contact me<i class="fa-solid fa-person-walking-arrow-right"></i></li>
+        <li><a href="mailto:laz@thisislaz.net?&subject=Hello!&body=Say hello!"><i class="fa-solid fa-envelope"></i></a></li> |
+        <li><a href="https://www.instagram.com/itsthejourneylak" target="_blank"><i class="fa-brands fa-instagram"></i></a></li> |
+        <li><a href="https:/www.linkedin.com/in/laz-alvarez/" target="_blank"><i class="fa-brands fa-linkedin"></i></a></li> |
+        <li><a href="https:/github.com/thisislaz" target="_blank"><i class="fa-brands fa-github"></i></a></li>
+      </ul>
+    </nav>
+  </footer>
+
+
+</body>
+<script src="/static/js/script.js"></script>
+
+</html>

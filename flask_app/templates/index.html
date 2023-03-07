@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to NoCapLoadBoard!!</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://kit.fontawesome.com/eb2c2d28d2.js" crossorigin="anonymous"></script>
+</head>
+
+<body >
+  <header>
+    <div class="nav_bar">
+      <div class="left_nav">
+        <h2><a href="/">NoCapLoadBoard</a></h2>
+      </div>
+      <ul class="right_nav">
+        {% if 'carrier_id' in session %}
+          <li><a href="/carrier/dashboard">Dashboard</a></li> |
+        {% elif 'shipper_id' in session %}
+          <li><a href="/shipper/dashboard">Dashboard</a></li> |
+        {% elif 'broker_id' in session %}
+          <li><a href="/broker/dashboard">Dashboard</a></li> |
+        {% else %}
+          <li><a href="/">Home</a></li> |
+        {% endif %}
+        
+        {% if session['user_id'] %}
+          {% if session['user_id'] == lu.user_id %}
+            <li><a href="/logout">Logout</a></li>
+          {% endif %}
+        {% else %}
+            <li><a href="/login">Login</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </header>
+
+  <main class="main_background ">
+    <br>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="body_div flashes">
+            {{message}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="removeDiv(this)">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <div class="body_div">
+      <h1>NoCapLoadBoard</h1>
+      <h3>Bridging the Gap, between business and demand.</h3>
+      <br>
+      <div>
+        {% if 'broker_id' in session %}
+          <a class="green" href="/broker/dashboard">
+            <button class="button-85" role="button">BROKER SIGN UP</button>
+          </a>
+        {% else %}
+          <a class="green" href="/broker/sign_up">
+            <button class="button-85" role="button">BROKER SIGN UP</button>
+          </a>
+        {% endif %}
+        {% if 'shipper_id' in session %}
+          <a class="green" href="/shipper/dashboard">
+            <button class="button-85" role="button">SHIPPER SIGN UP</button>
+          </a>
+        {% else %}
+          <a class="green" href="/shipper/sign_up">
+            <button class="button-85" role="button">SHIPPER SIGN UP</button>
+          </a>
+        {% endif %}
+        {% if session['carrier_id'] %}
+          <a class="green" href="/carrier/dashboard">
+            <button class="button-85" role="button">CARRIER SIGN UP</button>
+          </a>
+        {% else  %}
+          <a class="green" href="/carrier/sign_up">
+            <button class="button-85" role="button">CARRIER SIGN UP</button>
+          </a>
+        {% endif %}
+      </div>
+      <br>
+      {% if 'carrier_id' in session %}
+        <a class="green" href="/carrier/dashboard">
+          <button class="button-85" role="button">Already have an account?</button>
+        </a>
+      {% elif 'shipper_id' in session %}
+        <a class="green" href="/shipper/dashboard">
+          <button class="button-85" role="button">Already have an account?</button>
+        </a>
+      {% elif 'broker_id' in session %}
+        <a class="green" href="/broker/dashboard">
+          <button class="button-85" role="button">Already have an account?</button>
+        </a>
+      {% else %}
+        <a class="green" href="/login">
+          <button class="button-85" role="button">Already have an account?</button>
+        </a>
+      {% endif %}
+    </div>
+    <section class="body_div">
+      <p>In the world of freight shipping, finding the right carrier or load can be a challenge. That's where free freight load boards come in - they provide a platform for shippers, carriers, and freight brokers to post their available trucks or loads and connect with each other. One such load board is my own, which I have created with the aim of providing a simple and efficient way for businesses to find the right freight solutions.</p>
+      <p>The process is simple: shippers, carriers, and brokers can create an account on my website and post their available loads for trucks. The listings are organized by origin, destination, and other relevant criteria, making it easy for users to find what they're looking for. Shippers can browse through available carriers and brokers, while carriers can look for available loads that fit their schedule and capacity. Brokers can connect shippers with carriers and help facilitate the transportation of their goods.</p>
+      <p>One of the unique features of my free freight load board is that it's completely free. There are no hidden fees or charges for using the platform. This is a major advantage for small businesses and independent carriers who may not have the resources to pay for expensive load boards. By offering a free service, I hope to level the playing field and help small businesses succeed in the competitive world of freight shipping.</p>
+      <p>Of course, no platform is perfect, and there's always room for improvement. That's why I encourage users to reach out to me with any feedback they have on the site. Whether it's a suggestion for a new feature or a complaint about a bug, I want to hear it all. By listening to the needs of my users, I can make changes that will improve the platform and make it even more useful for everyone. I want to make sure that the site is easy to navigate and understand, even for users who may not be familiar with load boards. I've already made some improvements in this area based on user feedback, but I'm always looking for ways to make the platform more intuitive and user-friendly. Another area where I'm open to feedback is the types of loads and trucks that are listed on the site. I want to make sure that there's a diverse range of options available for shippers and carriers alike. If users feel that there's a particular type of load or truck that's missing from the platform, I want to know about it so that I can work to expand the listings.</p>
+      <p>To sum up, my free freight load board provides a valuable service to shippers, carriers, and brokers by providing a platform for them to connect with each other. By offering a free and easy-to-use platform, I hope to help small businesses succeed in the competitive world of freight shipping. I'm always open to feedback and suggestions from users, so please don't hesitate to reach out to me with any ideas or concerns you may have. Together, we can make the platform even better and more useful for everyone.</p>
+    </section>
+    <div class="body_div">
+        <h2>Recently posted loads</h2>
+        <table id="posted_trucks">
+          <thead>
+            <tr>
+              <th>Posted</th>
+              <th>Load Reference</th>
+              <th>Origin City</th>
+              <th>Origin State</th>
+              <th>Destination City</th>
+              <th>Destination State</th>
+              <th>Pick-up</th>
+              <th>Delivery</th>
+              <th>Equipment Type</th>
+              <th>Rate per mile</th>
+              <th>Weight</th>
+              <th>Size</th>
+              <th>Length</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for load in loads %}
+              <tr>
+                <td>{{date_hrs_subtraction(convert_from_tuple(load.created_at),now)}}</td>
+                {% if load.load_number == '' %}
+                <td>??</td>
+                {% else %}
+                <td>{{load.load_number}}</td>
+                {% endif %}
+                {% if load.origin_city == '' %}
+                <td>??</td>
+                {% else %}
+                <td>{{load.origin_city|title}}</td>
+                {% endif %}
+                {% if load.origin_state == '' %}
+                <td>??</td>
+                {% else %}
+                <td>{{load.origin_state|upper}}</td>
+                {% endif %}
+                {% if load.destination_city == '' %}
+                <td>??</td>
+                {% else %}
+                <td>{{load.destination_city.title()}}</td>
+                {% endif %}
+                <td>{{load.destination_state.upper()}}</td>
+                <td>{{load.pickup_date.strftime('%m-%d-%Y')}}</td>
+                <td>{{load.delivery_date.strftime('%m-%d-%Y')}}</td>
+                {% if load.equipment_type == '1' %}
+                  <td>Van</td>
+                {% elif load.equipment_type == '2' %}
+                  <td>Reefer</td>
+                {% elif load.equipment_type == '3' %}
+                  <td>Flatbed</td>
+                {% endif %}
+                {% if load.rate_per_mile == 'call' or load.rate_per_mile == 'Call' or load.rate_per_mile == 'CALL' %}
+                <td>{{load.rate_per_mile|title}}</td>
+                {% else %}
+                <td>??</td>
+                {% endif %}
+                <td>{{load.weight}}</td>
+                {% if load.size == "1" %}
+                  <td>LTL</td>
+                {% elif load.size == "2" %}
+                  <td>FTL</td>
+                {% elif load.size == "3" %}
+                  <td>OD</td>
+                {% endif %}
+                {% if load.length == "1" %}
+                  <td>48</td>
+                {% elif load.length == "2" %}
+                  <td>53</td>
+                {% elif load.length == "3" %}
+                  <td>Other</td>
+                {% endif %}
+                <td><a href="/load/{{load.load_id}}">Details</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+    <div class="body_div">
+          <h2>Recently posted trucks</h2>
+          
+          <table id="posted_trucks">
+            <thead>
+              <tr>
+                <th>Posted</th>
+                <th>Truck Reference</th>
+                <th>Origin City</th>
+                <th>Origin State</th>
+                <th>Radius</th>
+                <th>Destination City</th>
+                <th>Destination State</th>
+                <th>Radius</th>
+                <th>Equipment Type</th>
+                <th>Weight</th>
+                <th>Length</th>
+                <th>Rate Per Mile</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for one_truck in trucks %}
+              <tr>
+                <td>{{date_hrs_subtraction(convert_from_tuple(one_truck.created_at),now)}}</td>
+                {% if one_truck.truck_number == '' %}
+                <td>??</td>
+                {% else %}
+                <td>{{one_truck.truck_number}}</td>
+                {% endif %}
+                {% if one_truck.origin_city == '' %}
+                <td>??</td>
+                {% else %}
+                <td>{{one_truck.origin_city|title}}</td>
+                {% endif %}
+                {% if one_truck.origin_state== '' %}
+                <td>??</td>
+                {% else %}
+                <td>{{one_truck.origin_state|upper}}</td>
+                {% endif %}
+                {% if one_truck.origin_radius == '' %}
+                <td>??</td>
+                {% else %}
+                <td>{{one_truck.origin_radius}}</td>
+                {% endif %}
+                {% if one_truck.destination_city == '' %}
+                <td>??</td>
+                {% else %}
+                <td>{{one_truck.destination_city|title}}</td>
+                {% endif %}
+                {% if one_truck.destination_state == '' %}
+                <td>??</td>
+                {% else %}
+                <td>{{one_truck.destination_state|upper}}</td>
+                {% endif %}
+                {% if one_truck.destination_radius == '' %}
+                <td>??</td>
+                {% else %}
+                <td>{{one_truck.destination_radius}}</td>
+                {% endif %}
+                <td>{% if one_truck.equipment_type|int == 1 %}
+                  Van
+                  {% elif one_truck.equipment_type|int == 2 %}
+                  Reefer
+                  {% elif one_truck.equipment_type|int == 3 %}
+                  Flatbed
+                  {% endif %}
+                </td>
+                <td>{{one_truck.weight}}</td>
+                {% if one_truck.length|int == 1 %}
+                <td>48</td>
+                {% elif one_truck.length|int == 2 %}
+                <td>53</td>
+                {% elif one_truck.length|int == 3 %}
+                <td>Other</td>
+                {% endif %}
+                <td>??</td>
+                <td><a href="/truck/{{one_truck.truck_id}}">Details</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+    </div>
+    <div class="body_div">
+      <h2>NoCapLoadBoard</h2>
+      <h3><span class="text-center">
+        Stop capping and sign up or log in to NoCapLoadBoard to access detailed load or truck information. Don't miss out on finding the perfect match for your transportation needs. Join our community of shippers, carriers, and brokers today.
+      </span></h3>
+      <br>
+      <div>
+        {% if 'broker_id' in session %}
+          <a class="green" href="/broker/dashboard">
+            <button class="button-85" role="button">BROKER SIGN UP</button>
+          </a>
+        {% else %}
+          <a class="green" href="/broker/sign_up">
+            <button class="button-85" role="button">BROKER SIGN UP</button>
+          </a>
+        {% endif %}
+        {% if 'shipper_id' in session %}
+          <a class="green" href="/shipper/dashboard">
+            <button class="button-85" role="button">SHIPPER SIGN UP</button>
+          </a>
+        {% else %}
+          <a class="green" href="/shipper/sign_up">
+            <button class="button-85" role="button">SHIPPER SIGN UP</button>
+          </a>
+        {% endif %}
+        {% if session['carrier_id'] %}
+          <a class="green" href="/carrier/dashboard">
+            <button class="button-85" role="button">CARRIER SIGN UP</button>
+          </a>
+        {% else  %}
+          <a class="green" href="/carrier/sign_up">
+            <button class="button-85" role="button">CARRIER SIGN UP</button>
+          </a>
+        {% endif %}
+      </div>
+      <br>
+      {% if 'carrier_id' in session %}
+        <a class="green" href="/carrier/dashboard">
+          <button class="button-85" role="button">Already have an account?</button>
+        </a>
+      {% elif 'shipper_id' in session %}
+        <a class="green" href="/shipper/dashboard">
+          <button class="button-85" role="button">Already have an account?</button>
+        </a>
+      {% elif 'broker_id' in session %}
+        <a class="green" href="/broker/dashboard">
+          <button class="button-85" role="button">Already have an account?</button>
+        </a>
+      {% else %}
+        <a class="green" href="/login">
+          <button class="button-85" role="button">Already have an account?</button>
+        </a>
+      {% endif %}
+    </div>
+  </main>
+
+  <footer id="footer ">
+    <nav id="nav_bar_footer" class="nav_bar ">
+      <div class="left_nav">
+        <h2><a href="/">NoCapLoadBoard</a></h2>
+      </div>
+      <ul class="right_nav">
+        <li>Contact me<i class="fa-solid fa-person-walking-arrow-right"></i></li>
+        <li><a href="mailto:laz@thisislaz.net?&subject=Hello!&body=Say hello!"><i class="fa-solid fa-envelope"></i></a></li> |
+        <li><a href="https://www.instagram.com/itsthejourneylak" target="_blank"><i class="fa-brands fa-instagram"></i></a></li> |
+        <li><a href="https:/www.linkedin.com/in/laz-alvarez/" target="_blank"><i class="fa-brands fa-linkedin"></i></a></li> |
+        <li><a href="https:/github.com/thisislaz" target="_blank"><i class="fa-brands fa-github"></i></a></li>
+      </ul>
+    </nav>
+  </footer>
+
+
+</body>
+<script src="/static/js/script.js"></script>
+
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to NoCapLoadBoard!!</title>
+  <script src="https://kit.fontawesome.com/eb2c2d28d2.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+
+  <header class="nav_bar">
+    <div class="left_nav">
+      <h2>
+        {{cap(_user.first_name)}} {{cap(_user.last_name)}} |
+        {{ cap(_carrier.company_name)}}
+      </h2>
+    </div>
+    <ul class="right_nav">
+      <li><a href="/">Home</a></li> |
+      <li><a href="/carrier/add_truck">Post Trucks</a></li> |
+      <li><a href="/find_loads">Find Loads</a></li> |
+      {% if session['user_id'] %}
+      <li><a href="/logout">Logout</a></li>
+      {% else %}
+      <li><a href="/login">Login</a></li>
+      {% endif %}
+    </ul>
+  </header>
+  <main class="main_background">
+    
+    <div class="body_div white_bg">
+      <h1>Dashboard</h1>
+    </div>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="body_div flashes">
+            {{message}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="removeDiv(this)">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <div class="body_div">
+      {% if session['truck_id'] != 0 and session['truck_id'] != None %}
+      <h2>Your posted trucks</h2>
+      <br>
+      <table id="posted_trucks">
+        <thead>
+          <tr>
+            <th>Posted</th>
+            <th>Truck Reference Number</th>
+            <th>Origin City</th>
+            <th>Origin State</th>
+            <th>Radius</th>
+            <th>Destination City</th>
+            <th>Destination State</th>
+            <th>Radius</th>
+            <th>Equipment Type</th>
+            <th>Weight</th>
+            <th>Length</th>
+            <th>Rate Per Mile</th>
+            <th>Details</th>
+            <th>Edit Truck</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for one_truck in new_t %}
+          <tr>
+            <td>{{date_hrs_subtraction(convert_from_tuple(one_truck.created_at),now)}}</td>
+            {% if one_truck.truck_number == None %}
+            <td></td>
+            {% else %}
+            <td>{{one_truck.truck_number}}</td>
+            {% endif %}
+            <td>{{one_truck.origin_city.title()}}</td>
+            <td>{{one_truck.origin_state.upper()}}</td>
+            <td>{{one_truck.origin_radius}}</td>
+            <td>{{one_truck.destination_city.title()}}</td>
+            <td>{{one_truck.destination_state.upper()}}</td>
+            <td>{{one_truck.destination_radius}}</td>
+            <td>{% if one_truck.equipment_type|int == 1 %}
+              Van
+              {% elif one_truck.equipment_type|int == 2 %}
+              Reefer
+              {% elif one_truck.equipment_type|int == 3 %}
+              Flatbed
+              {% endif %}
+            </td>
+            <td>{{one_truck.weight}}</td>
+            <td>{% if one_truck.length|int == 1 %}
+              48
+              {% elif one_truck.length|int == 2 %}
+              53
+              {% elif one_truck.length|int == 3 %}
+              Other
+              {% endif %}
+            </td>
+            {% if one_truck.rate_per_mile|float == 0.00 %}
+            <td></td>
+            {% else %}
+            <td>${{'%0.2f' % one_truck.rate_per_mile|float}}</td>
+            {% endif %}
+            <td><a href="/truck/{{one_truck.truck_id}}">Details</a></td>
+            <td><a href="/carrier/{{one_truck.truck_id}}/edit">Edit</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <br>
+      <a class="green" href="/carrier/add_truck">
+        <button class="button-85" role="button">Post a truck</button>
+      </a>
+      <section class="body_div">
+        <p>Congratulations! You've successfully posted your truck on NoCapLoadBoard, the free freight load board
+          designed to help carriers like you find the right loads to transport. By posting your truck on our platform,
+          you can connect with a network of shippers and brokers looking for reliable carriers like you. Our load board
+          is user-friendly and easy to navigate, so you can quickly and easily post your truck and start finding
+          available loads. Our listings are organized by origin, destination, and other relevant criteria, making it
+          easy for you to find the right loads that fit your schedule and capacity. With NoCapLoadBoard, you can expand
+          your customer base and keep your trucks running at full capacity.</p>
+        <p>So what are you waiting for? Start searching for available loads on NoCapLoadBoard today and find the right
+          transportation solutions for your business. Whether you're a carrier looking for available loads or a shipper
+          looking for the right carrier, our platform has everything you need to succeed. Don't miss out on the
+          opportunity to grow your business - sign up for NoCapLoadBoard today!</p>
+      </section>
+      <a class="green" href="/find_loads">
+        <button class="button-85" role="button">Search loads</button>
+      </a>
+      <br>
+      <br>
+      {% else %}
+      <h2>You have not posted any trucks!!</h2>
+      <section class="body_div">
+        <p>Welcome to NoCapLoadBoard, the free freight load board designed to help carriers like you find the right
+          loads to transport. Whether you're a small carrier or a large transportation company, our platform is the
+          perfect solution to find new business opportunities and keep your trucks running at full capacity. Getting
+          started on our load board is quick and easy. Simply sign up for a free account and start browsing through
+          available loads. With our user-friendly interface and powerful search tools, you can quickly find the right
+          loads that fit your schedule and capacity. And once you're ready to start posting your trucks, you can easily
+          do so with just a few clicks. Our platform makes it easy for shippers and brokers to find you, so you can
+          expand your customer base and grow your business.</p>
+        <p>But don't just take our word for it - give NoCapLoadBoard a try and see for yourself how easy it is to find
+          new business opportunities. Start browsing through available loads - with our platform, the possibilities are
+          endless. So what are you waiting for? Give NoCapLoadBoard a try today and start taking advantage of all the
+          benefits our platform has to offer. We're confident that you'll love our load board and find the right loads
+          to transport - and if you have any questions or concerns, our support team is always here to help. Don't miss
+          out on the opportunity to grow your business psot your truck on NoCapLoadBoard today!</p>
+      </section>
+      <a class="green" href="/carrier/add_truck">
+        <button class="button-85" role="button">Post truck</button>
+      </a>
+      <br><br>
+      {% endif %}
+    </div>
+  </main>
+
+  <footer id="footer ">
+    <nav id="nav_bar_footer" class="nav_bar ">
+      <div class="left_nav">
+        <h2><a href="/">NoCapLoadBoard</a></h2>
+      </div>
+      <ul class="right_nav">
+        <li>Contact me<i class="fa-solid fa-person-walking-arrow-right"></i></li>
+        <li><a href="mailto:laz@thisislaz.net?&subject=Hello!&body=Say hello!"><i class="fa-solid fa-envelope"></i></a>
+        </li> |
+        <li><a href="https://www.instagram.com/itsthejourneylak" target="_blank"><i
+              class="fa-brands fa-instagram"></i></a></li> |
+        <li><a href="https:/www.linkedin.com/in/laz-alvarez/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+        </li> |
+        <li><a href="https:/github.com/thisislaz" target="_blank"><i class="fa-brands fa-github"></i></a></li>
+      </ul>
+    </nav>
+  </footer>
+
+
+
+
+</body>
+
+<script src="/static/js/script.js"></script>
+
+</html>

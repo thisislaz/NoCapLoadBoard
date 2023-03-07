@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to NoCapLoadBoard!!</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+
+<body>
+  
+    <header class="nav_bar">
+
+      <div class="left_nav">
+        <h2><a href="/">NoCapLoadBoard</a></h2>
+      </div>
+      <ul class="right_nav">
+        <li><a href="/">Home</a></li> |
+        
+        {% if session['user_id'] %}
+            <li><a href="/logout">Logout</a></li>
+        {% else %}
+            <li><a href="/login">Login</a></li>
+        {% endif %}
+      </ul>
+
+    </header>
+    
+    <main class="main_background">
+      <div class="body_div">
+        <section class="body_div">
+          <p>To join the NoCapLoadBoard community and start connecting with shippers, carriers, and brokers, please fill out the required information to create your account. Once you've completed the form, click "Next" to move on to the next section. With our easy-to-use platform and no hidden fees, you'll be able to find the right freight solutions for your business in no time. Don't wait any longer, sign up today and start taking advantage of our free service!</p>
+        </section>
+        <h1>NoCapLoadBoard</h1>
+        <form class="form_inline" action="/broker/sign_up/new_broker" method="post">
+          <label for="email">Email</label>
+          <input class="input_width" type="email" name="email" id="email">
+          <label for="first_name">First Name</label>
+          <input class="input_width_sm" type="text" name="first_name" id="first_name">
+          <label for="last_name">Last Name</label>
+          <input class="input_width_sm" type="text" name="last_name" id="last_name">
+          <br>
+          <h4>Password must contain:</h4>
+          <br>
+          <ul>
+            <li>One uppercase letter</li>
+            <li>One number</li>
+            <li>Minimum of 8 characters</li>
+            <li>One special character (#?!@$%^&*-)</li>
+          </ul>
+          <br>
+          <div>
+            
+          </div>
+          <label for="password">Password</label>
+          <input class="input_width_sm" type="password" name="password" id="password">
+
+            {% for message in get_flashed_messages() %}
+            <span>{{ message }}</span>
+            {% endfor %}
+          <label for="password2">Confirm Password</label>
+          <input class="input_width_sm" type="password" name="confirm_pass" id="password2">
+          <br>
+          <div>
+            <button>Next</button>
+          </div>
+        </form>
+        <section class="body_div">
+          <p>To join the NoCapLoadBoard community and start connecting with shippers, carriers, and brokers, please fill out the required information to create your account. Once you've completed the form, click "Next" to move on to the next section. With our easy-to-use platform and no hidden fees, you'll be able to find the right freight solutions for your business in no time. Don't wait any longer, sign up today and start taking advantage of our free service!</p>
+        </section>
+      </div>
+    </main>
+
+      <footer id="footer ">
+    <nav id="nav_bar_footer" class="nav_bar ">
+      <div class="left_nav">
+        <h2><a href="/">NoCapLoadBoard</a></h2>
+      </div>
+      <ul class="right_nav">
+        <li>Contact me<i class="fa-solid fa-person-walking-arrow-right"></i></li>
+        <li><a href="mailto:laz@thisislaz.net?&subject=Hello!&body=Say hello!"><i class="fa-solid fa-envelope"></i></a></li> |
+        <li><a href="https://www.instagram.com/itsthejourneylak" target="_blank"><i class="fa-brands fa-instagram"></i></a></li> |
+        <li><a href="https:/www.linkedin.com/in/laz-alvarez/" target="_blank"><i class="fa-brands fa-linkedin"></i></a></li> |
+        <li><a href="https:/github.com/thisislaz" target="_blank"><i class="fa-brands fa-github"></i></a></li>
+      </ul>
+    </nav>
+  </footer>
+
+    
+</body>
+<script src="/static/js/script.js"></script>
+</html>

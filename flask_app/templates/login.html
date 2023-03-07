@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to NoCapLoadBoard!!</title>
+  <script src="https://kit.fontawesome.com/eb2c2d28d2.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body >
+  
+    <header class="nav_bar">
+      <div class="left_nav">
+        <h2><a href="/">NoCapLoadBoard</a></h2>
+      </div>
+      <ul class="right_nav">
+        <li><a href="/">Home</a></li> |
+        {% if session['user_id'] %}
+            <li><a href="/logout">Logout</a></li>
+        {% else %}
+            <li><a href="/login">Login</a></li>
+        {% endif %}
+      </ul>
+    </header>
+
+    <main class="main_background">
+      <section class="body_div">
+        <p>Welcome back to NoCapLoadBoard! Don't miss out on the latest opportunities for your business. Log in now and discover the perfect load for your truck or the ideal carrier for your load. Our user-friendly platform is waiting for you to explore and connect with the right partner. Take advantage of our free service and get ahead in the competitive world of freight shipping. With just a few clicks, you can access a vast network of shippers, carriers, and brokers, all looking for the right match. Don't wait any longer, log in now and start searching for your next great opportunity!</p>
+      </section>
+      <div class="body_div white_bg">
+        <h1>Please sign in for access</h1>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="body_div flashes">
+            {{message}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="removeDiv(this)">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+      </div>
+      <div class="body_div white_bg">
+        <form class="form_inline" action="/login/user" method="post">
+          <label for="email">Email</label>
+          <input class="input_width" type="email" name="email" id="email">
+          <label for="password">Password</label>
+          <input class="input_width" type="password" name="password" id="password">
+          <div>
+            <button type="submit">Log In</button>
+          </div>
+          <br>
+        </form>
+        <br><br>
+        <h3>Don't have an account?</h3>
+        <div id="sign_up_links">
+          <a class="green" href="/broker/sign_up">
+            <button class="button-85" role="button">BROKER SIGN UP</button>
+          </a>
+          <a class="green" href="/shipper/sign_up">
+            <button class="button-85" role="button">SHIPPER SIGN UP</button>
+          </a>
+          <a class="green" href="/carrier/sign_up"> 
+            <button class="button-85" role="button">CARRIER SIGN UP</button>
+          </a>
+        </div>
+      </div>
+      <section class="body_div">
+        <p>Welcome back to NoCapLoadBoard! Don't miss out on the latest opportunities for your business. Log in now and discover the perfect load for your truck or the ideal carrier for your load. Our user-friendly platform is waiting for you to explore and connect with the right partner. Take advantage of our free service and get ahead in the competitive world of freight shipping. With just a few clicks, you can access a vast network of shippers, carriers, and brokers, all looking for the right match. Don't wait any longer, log in now and start searching for your next great opportunity!</p>
+      </section>
+    </main>
+    
+      <footer id="footer ">
+    <nav id="nav_bar_footer" class="nav_bar ">
+      <div class="left_nav">
+        <h2><a href="/">NoCapLoadBoard</a></h2>
+      </div>
+      <ul class="right_nav">
+        <li>Contact me<i class="fa-solid fa-person-walking-arrow-right"></i></li>
+        <li><a href="mailto:laz@thisislaz.net?&subject=Hello!&body=Say hello!"><i class="fa-solid fa-envelope"></i></a></li> |
+        <li><a href="https://www.instagram.com/itsthejourneylak" target="_blank"><i class="fa-brands fa-instagram"></i></a></li> |
+        <li><a href="https:/www.linkedin.com/in/laz-alvarez/" target="_blank"><i class="fa-brands fa-linkedin"></i></a></li> |
+        <li><a href="https:/github.com/thisislaz" target="_blank"><i class="fa-brands fa-github"></i></a></li>
+      </ul>
+    </nav>
+  </footer>
+
+  
+  </body>
+  <script src="/static/js/script.js"></script>
+
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to NoCapLoadBoard!!</title>
+  <script src="https://kit.fontawesome.com/eb2c2d28d2.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+  
+    <header class="nav_bar">
+      <div class="left_nav">
+        {% if 'broker_id' in session or 'shipper_id' in session %}
+          <h2><a href="/find_trucks">
+          Posted by : {{cap(truck.postee.company_name)}}
+          </a></h2>
+        {% elif 'carrier_id' in session %}
+        <h2><a href="/carrier/dashboard">
+          Posted by : {{cap(truck.postee.company_name)}}
+          </a></h2>
+        {% endif %}
+      </div>
+      <ul class="right_nav">
+        {% if 'carrier_id' in session %}
+          <li><a href="/carrier/dashboard">Home</a></li> |
+          <li><a href="/carrier/add_truck">Post Trucks</a></li> |
+          <li><a href="/find_loads">Find Loads</a></li> |
+        {% elif "broker_id" in session %}
+          <li><a href="/broker/dashboard">Home</a></li> |
+          <li><a href="/broker/add_load">Post Loads</a></li> |
+          <li><a href="/find_trucks">Find Trucks</a></li> |
+          <li><a href="/find_loads">Find Loads</a></li> |
+        {% elif "shipper_id" in session %}
+          <li><a href="/shipper/dashboard">Home</a></li> |
+          <li><a href="/shipper/add_load">Post Loads</a></li> |
+          <li><a href="/find_trucks">Find Trucks</a></li> |
+        {% endif %}
+        {% if session['user_id'] %}
+            <li><a href="/logout">Logout</a></li>
+        {% else %}
+            <li><a href="/login">Login</a></li>
+        {% endif %}
+      </ul>
+    </header>
+
+    <main class="main_background">
+
+      <div class="body_div white_bg">
+        <h1>Truck Details</h1>
+      </div>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="body_div flashes">
+            {{message}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="removeDiv(this)">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+      <div class="bg_clr">
+        <div class="body_div td_flex">
+          <div class="details_left">
+            <ul>
+              <li>Origin City: {{truck.origin_city.title()}}</li>
+              <li>Origin State: {{truck.origin_state.upper()}}</li>
+              <li>Origin Raidus: {{truck.origin_radius}}mi</li>
+              <li>Posted: {{truck.created_at.strftime("%m/%d/%y")}}</li>
+              {% if truck.equipment_type == '1' %}
+                <li>Equipment Type: Van</li>
+              {% elif truck.equipment_type == '2' %}
+                <li>Equipment Type: Reefer</li>
+              {% elif truck.equipment_type == '3' %}
+                <li>Equipment Type: Flatbed</li>
+              {% endif %}
+              <li>Posted by: {{cap(truck.postee.company_name.title())}}</li>
+              <li>Email: <a href="mailto:{{truck.user.email}}"><span class="green_email">{{truck.user.email}}</span></a></li>
+              <li>Phone: {{phone_format(truck.postee.company_phone)}}</li>
+              <li>Truck reference number: {{truck.truck_number}}</li> 
+            </ul>
+          </div>
+          <div class="details_right">
+            <ul>
+              <li>Destination City: {{truck.destination_city.title()}}</li>
+              <li>Destination State: {{truck.destination_state.upper()}}</li>
+              <li>Destination Raidus: {{truck.destination_radius}}mi</li>
+              <li>Weight able to be hauled: {{truck.weight}}</li>
+              {% if truck.length|int == 1 %}
+              <li>Trailer length: 48</li>
+              {% elif truck.length|int == 2 %}
+              <li>Trailer length: 53</li>
+              {% elif truck.length|int == 3 %}
+              <li>Trailer length: Other</li>
+              {% endif %}
+              {% if truck.rate_per_mile|float == 0.00 %}
+                <li>Prefered rate Per Mile: Call</li>
+              {% else %}
+                <li>Prefered rate Per Mile: ${{'%0.2f' % truck.rate_per_mile|float}}</li>
+              {% endif %}
+              <li>MC Number: {{truck.postee.mc_number}}</li>
+              <li>US Dot: {{truck.postee.us_dot}}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="r_t_div">
+        {% if "broker_id" in session or "shipper_id" in session %}
+          <a class="green" href="/find_trucks">
+            <button class="button-85" role="button">Back</button>
+          </a>
+        {% elif 'carrier_id' in session %}
+          <a class="green" href="/carrier/dashboard">
+            <button class="button-85" role="button">Back</button>
+          </a>
+        {% endif %}
+        {% if session['carrier_id'] == truck.carrier_id %}
+          <a class="yellow" href="/carrier/{{truck.truck_id}}/edit">
+            <button  class="button-85" role="button">Edit Truck</button>
+          </a>
+          <a class="revert" href="/carrier/{{truck.truck_id}}/delete">
+            <button  class="button-85" role="button">Remove Truck</button>
+          </a>
+        {% endif %}
+        </div>
+        {% if 'broker_id' in session or 'shipper_id' in session %}
+        <div class="body_div">
+              <h2>All trucks posted by {{cap(truck.postee.company_name)}}</h2>
+              <table id="posted_trucks">
+                <thead>
+                  <tr>
+                    <th>Posted</th>
+                    <th>Truck Reference</th>
+                    <th>Origin City</th>
+                    <th>Origin State</th>
+                    <th>Radius</th>
+                    <th>Destination City</th>
+                    <th>Destination State</th>
+                    <th>Radius</th>
+                    <th>Equipment Type</th>
+                    <th>Weight</th>
+                    <th>Length</th>
+                    <th>Rate Per Mile</th>
+                    <th>Details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for one_truck in trucks %}
+                  {% if truck.postee.carrier_id == one_truck.carrier_id %}
+                  <tr>
+                    <td>{{date_hrs_subtraction(convert_from_tuple(one_truck.created_at),now)}}</td>
+                    <td>{{one_truck.truck_number}}</td>
+                    <td>{{one_truck.origin_city.title()}}</td>
+                    <td>{{one_truck.origin_state.upper()}}</td>
+                    <td>{{one_truck.origin_radius}}</td>
+                    <td>{{one_truck.destination_city.title()}}</td>
+                    <td>{{one_truck.destination_state.upper()}}</td>
+                    <td>{{one_truck.destination_radius}}</td>
+                    <td>{% if one_truck.equipment_type|int == 1 %}
+                      Van
+                      {% elif one_truck.equipment_type|int == 2 %}
+                      Reefer
+                      {% elif one_truck.equipment_type|int == 3 %}
+                      Flatbed
+                      {% endif %}
+                    </td>
+                    <td>{{one_truck.weight}}</td>
+                    <td>{% if one_truck.length|int == 1 %}
+                      48
+                      {% elif one_truck.length|int == 2 %}
+                      53
+                      {% elif one_truck.length|int == 3 %}
+                      Other
+                      {% endif %}
+                    </td>
+                    {% if one_truck.rate_per_mile == '' or one_truck.rate_per_mile|title == 'Call' %}
+                    <td>Call</td>
+                    {% else %}
+                    <td>${{'%0.2f' % one_truck.rate_per_mile|float}}</td>
+                    {% endif %}
+                    <td><a href="/truck/{{one_truck.truck_id}}">Details</a></td>
+                  </tr>
+                  {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
+        </div>
+        {% endif %}
+        </div>
+      </div>
+    </main>
+
+      <footer id="footer ">
+    <nav id="nav_bar_footer" class="nav_bar ">
+      <div class="left_nav">
+        <h2><a href="/">NoCapLoadBoard</a></h2>
+      </div>
+      <ul class="right_nav">
+        <li>Contact me<i class="fa-solid fa-person-walking-arrow-right"></i></li>
+        <li><a href="mailto:laz@thisislaz.net?&subject=Hello!&body=Say hello!"><i class="fa-solid fa-envelope"></i></a></li> |
+        <li><a href="https://www.instagram.com/itsthejourneylak" target="_blank"><i class="fa-brands fa-instagram"></i></a></li> |
+        <li><a href="https:/www.linkedin.com/in/laz-alvarez/" target="_blank"><i class="fa-brands fa-linkedin"></i></a></li> |
+        <li><a href="https:/github.com/thisislaz" target="_blank"><i class="fa-brands fa-github"></i></a></li>
+      </ul>
+    </nav>
+  </footer>
+
+
+</body>
+</html>

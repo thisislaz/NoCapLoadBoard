@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to NoCapLoadBoard!!</title>
+  <script src="https://kit.fontawesome.com/eb2c2d28d2.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+  
+    {% if 'shipper_id' in session %}
+    <header class="nav_bar">
+      <div class="left_nav">
+        <h2><a href="/shipper/dashboard">
+          {{cap(load.postee.company_name)}}
+        </a></h2>
+      </div>
+      <ul class="right_nav">
+        <li><a href="/shipper/dashboard">Home</a></li> |
+        <li><a href="/shipper/add_load">Post Loads</a></li> |
+        <li><a href="/find_trucks">Find Trucks</a></li> |
+        {% if session['user_id'] %}
+            <li><a href="/logout">Logout</a></li>
+        {% else %}
+            <li><a href="/login">Login</a></li>
+        {% endif %}
+      </ul>
+    </header>
+
+    <main class="main_background">
+      <div class="body_div white_bg">
+        <h1>Load Details</h1>
+      </div>
+      <div class="bg_clr">
+        <div class="body_div td_flex">
+          <div class="details_left">
+            <ul>
+              <li>Origin City: {{load.origin_city.title()}}</li>
+              <li>Origin State: {{load.origin_state.upper()}}</li>
+              <li>Pickup: {{load.pickup_date.strftime("%m/%d/%y")}}</li>
+              <li>Posted: {{load.created_at.strftime("%m/%d/%y")}}</li>
+              
+              <li>Posted by: {{cap(load.postee.company_name.title())}}</li>
+              <li>Email: <a href="mailto:{{load.user.email}}"><span class="green_email">{{load.user.email}}</span></a></li>
+              {% if 'ext' in load.postee.company_phone %}
+                <li>Phone: {{load.postee.company_phone}}</li>
+                {% else %}
+                <li>Phone: {{phone_format(load.postee.company_phone)}}</li>
+                {% endif %}
+              <li>Load reference number: {{load.load_number}}</li>
+            </ul>
+          </div>
+          <div class="details_right">
+            <ul>
+              <li>Destination City: {{load.destination_city.title()}}</li>
+              <li>Destination State: {{load.destination_state.upper()}}</li>
+              <li>Delivery: {{load.delivery_date.strftime("%m/%d/%y")}}</li>
+              {% if load.equipment_type == '1' %}
+                <li>Equipment Type: Van</li>
+              {% elif load.equipment_type == '2' %}
+                <li>Equipment Type: Reefer</li>
+              {% elif load.equipment_type == '3' %}
+                <li>Equipment Type: Flatbed</li>
+              {% endif %}
+              <li>Weight: {{load.weight}}</li>
+              {% if load.size == '1' %}
+                <li>Size: LTL</li>
+              {% elif load.size == '2' %}
+                <li>Size: FTL</li>
+              {% elif load.size == '3' %}
+                <li>Size: Other</li>
+              {% endif %}
+              {% if load.rate_per_mile.title() == ''  %}
+              <li>Rate per mile: Call</li>
+              {% elif load.rate_per_mile|float == 0.00 %}
+                <li>Rate per mile: Call</li>
+              {% else %}
+                <li>Rate per mile: ${{'%0.2f' % load.rate_per_mile|float}}</li>
+              {% endif %}
+              <li>US Dot Number: {{load.postee.us_dot}}</li>
+              <li>MC Number: {{load.postee.mc_number}}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="r_t_div">
+          <a class="green" href="/shipper/dashboard">
+            <button class="button-85" role="button">Back</button>
+          </a>
+          {% if load.postee.user_id == session['user_id'] %}
+          <a class="yellow" href="/shipper/{{load.load_id}}/edit">
+            <button  class="button-85" role="button">Edit Load</button>
+          </a>
+          <a class="revert" href="/shipper/{{load.load_id}}/delete">
+            <button  class="button-85" role="button">Remove Load</button>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </main>
+
+    {% elif "broker_id" in session %}
+    <header class="nav_bar">
+      <div class="left_nav">
+        <h2><a href="/broker/dashboard">
+          {{cap(load.postee.company_name)}}
+        </a></h2>
+      </div>
+      <ul class="right_nav">
+        <li><a href="/broker/dashboard">Home</a></li> |
+        <li><a href="/broker/add_load">Post Loads</a></li> |
+        <li><a href="/find_trucks">Find Trucks</a></li> |
+        <li><a href="/find_loads">Find Loads</a></li> |
+        {% if session['user_id'] %}
+            <li><a href="/logout">Logout</a></li>
+        {% else %}
+            <li><a href="/login">Login</a></li>
+        {% endif %}
+      </ul>
+    </header>
+
+    <main class="main_background">
+      <div class="body_div white_bg">
+        <h1>Load Details</h1>
+      </div>
+      <div class="bg_clr">
+        <div class="body_div td_flex">
+          <div class="details_left">
+            <ul>
+              <li>Origin City: {{load.origin_city.title()}}</li>
+              <li>Origin State: {{load.origin_state.upper()}}</li>
+              <li>Pickup: {{load.pickup_date.strftime("%m/%d/%y")}}</li>
+              <li>Posted: {{load.created_at.strftime("%m/%d/%y")}}</li>
+              
+              <li>Posted by: {{cap(load.postee.company_name.title())}}</li>
+              <li>Email: <a href="mailto:{{load.user.email}}"><span class="green_email">{{load.user.email}}</span></a></li>
+              {% if 'ext' in load.postee.company_phone %}
+                <li>Phone: {{load.postee.company_phone}}</li>
+                {% else %}
+                <li>Phone: {{phone_format(load.postee.company_phone)}}</li>
+                {% endif %}
+              <li>Load reference number: {{load.load_number}}</li>
+            </ul>
+          </div>
+          <div class="details_right">
+            <ul>
+              <li>Destination City: {{load.destination_city.title()}}</li>
+              <li>Destination State: {{load.destination_state.upper()}}</li>
+              <li>Delivery: {{load.delivery_date.strftime("%m/%d/%y")}}</li>
+              {% if load.equipment_type == '1' %}
+                <li>Equipment Type: Van</li>
+              {% elif load.equipment_type == '2' %}
+                <li>Equipment Type: Reefer</li>
+              {% elif load.equipment_type == '3' %}
+                <li>Equipment Type: Flatbed</li>
+              {% endif %}
+              <li>Weight: {{load.weight}}</li>
+              {% if load.size == '1' %}
+                <li>Size: LTL</li>
+              {% elif load.size == '2' %}
+                <li>Size: FTL</li>
+              {% elif load.size == '3' %}
+                <li>Size: Other</li>
+              {% endif %}
+              {% if load.rate_per_mile.title() == ''  %}
+                <li>Rate per mile: Call</li>
+                {% elif load.rate_per_mile|float == 0.00 %}
+                  <li>Rate per mile: Call</li>
+                {% else %}
+                  <li>Rate per mile: ${{'%0.2f' % load.rate_per_mile|float}}</li>
+                {% endif %}
+                <li>US Dot Number: {{load.postee.us_dot}}</li>
+              <li>MC Number: {{load.postee.mc_number}}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="r_t_div">
+          <a class="green" href="/find_loads">
+            <button class="button-85" role="button">Back</button>
+          </a>
+          {% if load.postee.user_id == session['user_id'] %}
+          <a class="yellow" href="/broker/{{load.load_id}}/edit">
+            <button  class="button-85" role="button">Edit Load</button>
+          </a>
+          <a class="revert" href="/broker/{{load.load_id}}/delete">
+            <button  class="button-85" role="button">Remove Load</button>
+          </a>
+          {% endif %}
+      </div>
+      {% if load.postee.user_id != session['user_id'] %}
+          <div class="body_div">
+              <h2>Loads posted by {{cap(load.postee.company_name)}}</h2>
+              <table id="posted_trucks">
+                <thead>
+                  <tr>
+                    <th>Posted</th>
+                    <th>Load Reference</th>
+                    <th>Origin City</th>
+                    <th>Origin State</th>
+                    <th>Destination City</th>
+                    <th>Destination State</th>
+                    <th>Pick-up</th>
+                    <th>Delivery</th>
+                    <th>Equipment Type</th>
+                    <th>Rate</th>
+                    <th>Weight</th>
+                    <th>Size</th>
+                    <th>Length</th>
+                    <th>Details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for l in loads %}
+                  {% if load.postee.user_id == l.user.user_id  %}
+                    <tr>
+                      <td>{{date_hrs_subtraction(convert_from_tuple(l.created_at),now)}}</td>
+                      <td>{{l.load_number}}</td>
+                      <td>{{l.origin_city.title()}}</td>
+                      <td>{{l.origin_state.upper()}}</td>
+                      <td>{{l.destination_city.title()}}</td>
+                      <td>{{l.destination_state.upper()}}</td>
+                      <td>{{l.pickup_date.strftime('%m-%d-%Y')}}</td>
+                      <td>{{l.delivery_date.strftime('%m-%d-%Y')}}</td>
+                      {% if l.equipment_type == '1' %}
+                        <td>Van</td>
+                      {% elif l.equipment_type == '2' %}
+                        <td>Reefer</td>
+                      {% elif l.equipment_type == '3' %}
+                        <td>Flatbed</td>
+                      {% endif %}
+                      {% if l.rate_per_mile == "" or l.rate_per_mile|title == 'Call' %}
+                      <td>Call</td>
+                      {% else %}
+                      <td>{{l.rate_per_mile}}</td>
+                      {% endif %}
+                      <td>{{l.weight}}</td>
+                      {% if l.size == "1" %}
+                        <td>LTL</td>
+                      {% elif l.size == "2" %}
+                        <td>FTL</td>
+                      {% elif l.size == "3" %}
+                        <td>OD</td>
+                      {% endif %}
+                      {% if l.length == "1" %}
+                        <td>48</td>
+                      {% elif l.length == "2" %}
+                        <td>53</td>
+                      {% elif l.length == "3" %}
+                        <td>Other</td>
+                      {% endif %}
+                      <td><a href="/load/{{l.load_id}}">Details</a></td>
+                    </tr>
+                    {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
+              </div>
+        </div>
+        {% endif %}
+      </main>
+
+
+    {% elif "carrier_id" in session %}
+      <header class="nav_bar">
+        <div class="left_nav">
+          <h2><a href="/carrier/dashboard">
+            NoCapLoadBoard
+          </a></h2>
+        </div>
+        <ul class="right_nav">
+          <li><a href="/carrier/dashboard">Home</a></li> |
+          <li><a href="/carrier/add_truck">Post Trucks</a></li> |
+          <li><a href="/find_loads">Find Loads</a></li> |
+          {% if session['user_id'] %}
+              <li><a href="/logout">Logout</a></li>
+          {% else %}
+              <li><a href="/login">Login</a></li>
+          {% endif %}
+        </ul>
+      </header>
+
+      <main class="main_background">
+        <div class="body_div white_bg">
+          <h1>Load Details</h1>
+        </div>
+        <div class="bg_clr">
+          <div class="body_div td_flex">
+            <div class="details_left">
+              <ul>
+                <li>Origin City: {{load.origin_city.title()}}</li>
+                <li>Origin State: {{load.origin_state.upper()}}</li>
+                <li>Pickup: {{load.pickup_date.strftime("%m/%d/%y")}}</li>
+                <li>Posted: {{load.created_at.strftime("%m/%d/%y")}}</li>
+                
+                <li>Posted by: {{cap(load.postee.company_name)}}</li>
+                <li>Email: <a href="mailto:{{load.user.email}}"><span class="green_email">{{load.user.email}}</span></a></li>
+                {% if 'ext' in load.postee.company_phone %}
+                <li>Phone: {{load.postee.company_phone}}</li>
+                {% else %}
+                <li>Phone: {{phone_format(load.postee.company_phone)}}</li>
+                {% endif %}
+                <li>Load reference number: {{load.load_number}}</li>
+              </ul>
+            </div>
+            <div class="details_right">
+              <ul>
+                <li>Destination: {{load.destination_city.title()}}</li>
+                <li>Destination: {{load.destination_state.upper()}}</li>
+                <li>Delivery: {{load.delivery_date.strftime("%m/%d/%y")}}</li>
+                {% if load.equipment_type == '1' %}
+                  <li>Equipment Type: Van</li>
+                {% elif load.equipment_type == '2' %}
+                  <li>Equipment Type: Reefer</li>
+                {% elif load.equipment_type == '3' %}
+                  <li>Equipment Type: Flatbed</li>
+                {% endif %}
+                <li>Weight: {{load.weight}}</li>
+                {% if load.size == '1' %}
+                  <li>Size: LTL</li>
+                {% elif load.size == '2' %}
+                  <li>Size: FTL</li>
+                {% elif load.size == '3' %}
+                  <li>Size: Other</li>
+                {% endif %}
+                {% if load.rate_per_mile.title() == ''  %}
+                <li>Rate per mile: Call</li>
+                {% elif load.rate_per_mile|float == 0.00 %}
+                  <li>Rate per mile: Call</li>
+                {% else %}
+                  <li>Rate per mile: ${{'%0.2f' % load.rate_per_mile|float}}</li>
+                {% endif %}
+                <li>US Dot Number: {{load.postee.us_dot}}</li>
+                <li>MC Number: {{load.postee.mc_number}}</li>
+              </ul>
+            </div>
+          </div>
+          <div class="r_t_div">
+            <a class="green" href="/find_loads">
+              <button class="button-85" role="button">Back</button>
+            </a>
+          </div>
+          {% if session['load_id'] != 0 and session['load_id'] != None %}
+          <div class="body_div">
+              <h2>Loads posted by {{cap(load.postee.company_name)}}</h2>
+              <table id="posted_trucks">
+                <thead>
+                  <tr>
+                    <th>Posted</th>
+                    <th>Load Reference</th>
+                    <th>Origin City</th>
+                    <th>Origin State</th>
+                    <th>Destination City</th>
+                    <th>Destination State</th>
+                    <th>Pick-up</th>
+                    <th>Delivery</th>
+                    <th>Equipment Type</th>
+                    <th>Rate</th>
+                    <th>Weight</th>
+                    <th>Size</th>
+                    <th>Length</th>
+                    <th>Details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for l in loads %}
+                  {% if load.postee.user_id == l.user.user_id  %}
+                    <tr>
+                      <td>{{date_hrs_subtraction(convert_from_tuple(l.created_at),now)}}</td>
+                      <td>{{l.load_number}}</td>
+                      <td>{{l.origin_city.title()}}</td>
+                      <td>{{l.origin_state.upper()}}</td>
+                      <td>{{l.destination_city.title()}}</td>
+                      <td>{{l.destination_state.upper()}}</td>
+                      <td>{{l.pickup_date.strftime('%m-%d-%Y')}}</td>
+                      <td>{{l.delivery_date.strftime('%m-%d-%Y')}}</td>
+                      {% if l.equipment_type == '1' %}
+                        <td>Van</td>
+                      {% elif l.equipment_type == '2' %}
+                        <td>Reefer</td>
+                      {% elif l.equipment_type == '3' %}
+                        <td>Flatbed</td>
+                      {% endif %}
+                      {% if l.rate_per_mile == "" or l.rate_per_mile|title == 'Call' %}
+                      <td>Call</td>
+                      {% else %}
+                      <td>{{l.rate_per_mile}}</td>
+                      {% endif %}
+                      <td>{{l.weight}}</td>
+                      {% if l.size == "1" %}
+                        <td>LTL</td>
+                      {% elif l.size == "2" %}
+                        <td>FTL</td>
+                      {% elif l.size == "3" %}
+                        <td>OD</td>
+                      {% endif %}
+                      {% if l.length == "1" %}
+                        <td>48</td>
+                      {% elif l.length == "2" %}
+                        <td>53</td>
+                      {% elif l.length == "3" %}
+                        <td>Other</td>
+                      {% endif %}
+                      <td><a href="/load/{{l.load_id}}">Details</a></td>
+                    </tr>
+                    {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
+              </div>
+            {% endif %}
+        </div>
+      </main>
+    {% endif %}
+
+      <footer id="footer ">
+    <nav id="nav_bar_footer" class="nav_bar ">
+      <div class="left_nav">
+        <h2><a href="/">NoCapLoadBoard</a></h2>
+      </div>
+      <ul class="right_nav">
+        <li>Contact me<i class="fa-solid fa-person-walking-arrow-right"></i></li>
+        <li><a href="mailto:laz@thisislaz.net?&subject=Hello!&body=Say hello!"><i class="fa-solid fa-envelope"></i></a></li> |
+        <li><a href="https://www.instagram.com/itsthejourneylak" target="_blank"><i class="fa-brands fa-instagram"></i></a></li> |
+        <li><a href="https:/www.linkedin.com/in/laz-alvarez/" target="_blank"><i class="fa-brands fa-linkedin"></i></a></li> |
+        <li><a href="https:/github.com/thisislaz" target="_blank"><i class="fa-brands fa-github"></i></a></li>
+      </ul>
+    </nav>
+  </footer>
+
+</body>
+</html>

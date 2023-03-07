@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to NoCapLoadBoard!!</title>
+  <script src="https://kit.fontawesome.com/eb2c2d28d2.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body class="main_background">
+  
+    <header class="nav_bar">
+
+      <div class="left_nav">
+        <h2><a href="/">NoCapLoadBoard</a></h2>
+      </div>
+      <ul class="right_nav">
+        {% if "broker_id" in session %}
+          <li><a href="/broker/dashboard">Home</a></li> |
+          <li><a href="/broker/add_load">Post Loads</a></li> |
+          <li><a href="/find_trucks">Find Trucks</a></li> |
+          <li><a href="/find_loads">Find Loads</a></li> |
+
+        {% elif "shipper_id" in session %}
+          <li><a href="/shipper/dashboard">Home</a></li> |
+          <li><a href="/shipper/add_load">Post Loads</a></li> |
+          <li><a href="/find_trucks">Find Trucks</a></li> |
+        {% endif %}
+        {% if session['user_id'] %}
+            <li><a href="/logout">Logout</a></li>
+        {% else %}
+            <li><a href="/login">Login</a></li>
+        {% endif %}
+      </ul>
+
+    </header>
+    <main class="main_background">
+
+      <div class="body_div white_bg">
+        <h1>Search for trucks</h1>
+      </div>
+      <div class="body_div">
+        <br>
+        <h3 class="red">Currently we can only handle searching by one criteria. An unsucessful search returns you to this page, with your lastest successful results.</h3>
+        <br>
+        <form class="form_inline" action="/process_searched_trucks" method="post">
+            <label for="all">All available trucks</label>
+            <select name="all" id="all">
+              <option hidden selected >
+              <option value="all_trucks">All trucks</option>
+            </select>
+            <label for="origin_city">Origin City</label>
+            <input type="text" name="origin_city" id="origin_city">
+            <label for="origin_state">Origin State</label>
+            <select name="origin_state" id="origin_state">
+              <option hidden selected value>
+            {% for s in states %}
+              <option value="{{s}}">{{s}}</option>
+            {% endfor %}
+            </select>
+            <label for="destination_city">Destination City</label>
+            <input type="text" name="destination_city" id="destination_city">
+            <label for="destination_state">Destination State</label>
+            <select name="destination_state" id="destination_state">
+              <option hidden selected value>
+            {% for s in states %}
+              <option value="{{s}}">{{s}}</option>
+            {% endfor %}
+            </select>
+            <label for="equipment_type">Equipment Type</label>
+            <select name="equipment_type" id="equipment_type">
+              <option hidden selected value="">
+              <option value="1">Van</option>
+              <option value="2">Reefer</option>
+              <option value="3">Flatbed</option>
+            </select>
+            <label for="weight">Weight able to haul</label>
+            <input type="text" name="weight" id="weight">
+            <label for="rate_per_mile">Max rate per mile</label>
+            <input type="text" name="rate_per_mile" id="rate_per_mile">
+          <div>
+            <button>Search Trucks</button>
+          </div>
+        </form>
+        <br>
+        <div class="body_div">
+              <h2>Search Results</h2>
+              <table id="posted_trucks">
+                <thead>
+                  <tr>
+                    <th>Posted</th>
+                    <th>Truck Reference</th>
+                    <th>Origin City</th>
+                    <th>Origin State</th>
+                    <th>Origin Radius</th>
+                    <th>Destination City</th>
+                    <th>Destination State</th>
+                    <th>Destination Radius</th>
+                    <th>Equipment Type</th>
+                    <th>Weight</th>
+                    <th>Length</th>
+                    <th>Rate Per Mile</th>
+                    <th>Posted By</th>
+                    <th>Details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for one_truck in truck_dictionary %}
+                  <tr>
+                    <td>{{date_hrs_subtraction(one_truck.created_at, now)}}</td>
+                    <td>{{one_truck.truck_number}}</td>
+                    <td>{{one_truck.origin_city.title()}}</td>
+                    <td>{{one_truck.origin_state.upper()}}</td>
+                    <td>{{one_truck.origin_radius}}</td>
+                    {% if one_truck.destination_city.title() == 'Any' %}
+                    <td>{{one_truck.destination_city|upper}}</td>
+                    {% else %}
+                    <td>{{one_truck.destination_city|title}}</td>
+                    {% endif %}
+                    <td>{{one_truck.destination_state.upper()}}</td>
+                    <td>{{one_truck.destination_radius}}</td>
+                    <td>{% if one_truck.equipment_type|int == 1 %}
+                      Van
+                      {% elif one_truck.equipment_type|int == 2 %}
+                      Reefer
+                      {% elif one_truck.equipment_type|int == 3 %}
+                      Flatbed
+                      {% endif %}
+                    </td>
+                    <td>{{one_truck.weight}}</td>
+                    <td>{% if one_truck.length|int == 1 %}
+                      48
+                      {% elif one_truck.length|int == 2 %}
+                      53
+                      {% elif one_truck.length|int == 3 %}
+                      Other
+                      {% endif %}
+                    </td>
+                    {% if one_truck.rate_per_mile == '' or one_truck.rate_per_mile|title == 'Call' %}
+                    <td>Call</td>
+                    {% else %}
+                    <td>${{'%0.2f' % one_truck.rate_per_mile|float}}</td>
+
+                    {% endif %}
+                    <td>{{cap(one_truck.postee.company_name)}}</td>
+                    <td><a href="/truck/{{one_truck.truck_id}}">Details</a></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+        </div>
+      </div>
+    </main>
+
+
+      <footer id="footer ">
+    <nav id="nav_bar_footer" class="nav_bar ">
+      <div class="left_nav">
+        <h2><a href="/">NoCapLoadBoard</a></h2>
+      </div>
+      <ul class="right_nav">
+        <li>Contact me<i class="fa-solid fa-person-walking-arrow-right"></i></li>
+        <li><a href="mailto:laz@thisislaz.net?&subject=Hello!&body=Say hello!"><i class="fa-solid fa-envelope"></i></a></li> |
+        <li><a href="https://www.instagram.com/itsthejourneylak" target="_blank"><i class="fa-brands fa-instagram"></i></a></li> |
+        <li><a href="https:/www.linkedin.com/in/laz-alvarez/" target="_blank"><i class="fa-brands fa-linkedin"></i></a></li> |
+        <li><a href="https:/github.com/thisislaz" target="_blank"><i class="fa-brands fa-github"></i></a></li>
+      </ul>
+    </nav>
+  </footer>
+
+
+</body>
+</html>

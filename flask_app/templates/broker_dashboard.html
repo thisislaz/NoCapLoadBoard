@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to NoCapLoadBoard!!</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://kit.fontawesome.com/eb2c2d28d2.js" crossorigin="anonymous"></script>
+
+</head>
+
+<body >
+  
+    <header class="nav_bar">
+      <div class="left_nav">
+        <h2>
+          {{cap(user.first_name)}} {{cap(user.last_name)}} |
+          {{ cap(broker.company_name)}}
+        </h2>
+      </div>
+      <ul class="right_nav">
+        <li><a href="/">Home</a></li> |
+        <li><a href="/broker/add_load">Post Loads</a></li> |
+        <li><a href="/find_trucks">Find Trucks</a></li> |
+        <li><a href="/find_loads">Find Loads</a></li> |
+        {% if session['user_id'] %}
+            <li><a href="/logout">Logout</a></li>
+        {% else %}
+            <li><a href="/login">Login</a></li>
+        {% endif %}
+      </ul>
+    </header>
+    <main class="main_background">
+      <div class="body_div white_bg">
+        <h1>Dashboard</h1>
+      </div>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <div class="body_div flashes">
+              {{message}}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="removeDiv(this)">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      <div class="body_div">
+      {% if session['load_id'] != 0 and session['load_id'] != None %}
+        <h2>Your posted loads</h2>
+        <br>
+        <table id="posted_trucks">
+          <thead>
+            <tr>
+              <th>Posted</th>
+              <th>Load Reference</th>
+              <th>Origin City</th>
+              <th>Origin State</th>
+              <th>Destination City</th>
+              <th>Destination State</th>
+              <th>Pick-up</th>
+              <th>Delivery</th>
+              <th>Equipment Type</th>
+              <th>Rate per mile</th>
+              <th>Weight</th>
+              <th>Size</th>
+              <th>Length</th>
+              <th>Details</th>
+              <th>Edit Load</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for load in my_loads %}
+              <tr>
+                <td>{{date_hrs_subtraction(convert_from_tuple(load.created_at),now)}}</td>
+                <td>{{load.load_number}}</td>
+                <td>{{load.origin_city.title()}}</td>
+                <td>{{load.origin_state.upper()}}</td>
+                <td>{{load.destination_city.title()}}</td>
+                <td>{{load.destination_state.upper()}}</td>
+                <td>{{load.pickup_date.strftime('%m-%d-%Y')}}</td>
+                <td>{{load.delivery_date.strftime('%m-%d-%Y')}}</td>
+                {% if load.equipment_type == '1' %}
+                  <td>Van</td>
+                {% elif load.equipment_type == '2' %}
+                  <td>Reefer</td>
+                {% elif load.equipment_type == '3' %}
+                  <td>Flatbed</td>
+                {% endif %}
+                <td>{{load.rate_per_mile.title()}}</td>
+                <td>{{load.weight}}</td>
+                {% if load.size == "1" %}
+                  <td>LTL</td>
+                {% elif load.size == "2" %}
+                  <td>FTL</td>
+                {% elif load.size == "3" %}
+                  <td>OD</td>
+                {% endif %}
+                {% if load.length == "1" %}
+                  <td>48</td>
+                {% elif load.length == "2" %}
+                  <td>53</td>
+                {% elif load.length == "3" %}
+                  <td>Other</td>
+                {% endif %}
+                <td><a href="/broker/load/{{load.load_id}}">Details</a></td>
+                <td><a href="/broker/{{load.load_id}}/edit">Edit</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <br>
+        <a class="green" href="/broker/add_load">
+          <button class="button-85" role="button">Post a load</button>
+        </a>
+        <section class="body_div">
+          <p>Congratulations! You have successfully posted your load on NoCapLoadBoard, the free freight load board designed to help businesses like yours find the right transportation solutions. By posting your load on our platform, you can reach a network of reliable carriers with the capacity to transport your goods efficiently and affordably. Our platform is designed to help brokers like you find the right carrier for their needs, whether you're shipping locally or across the country. Our listings are organized by origin, destination, and other relevant criteria, making it easy for you to find the right carrier for your shipment.</p>
+          <p>So what are you waiting for? Start searching for loads on NoCapLoadBoard today and find the right transportation solutions for your business. Whether you're looking to connect and establish new relationshipss or build a stronger relationship with your current carrier partners our platform has everything you need to succeed.</p>
+        </section>
+        <a class="green" href="/find_trucks">
+          <button class="button-85" role="button">Search trucks</button>
+        </a>
+        {% else %}
+        <br>
+        <h2>You have not posted loads!!</h2>
+        <section class="body_div">
+          <p>Welcome to NoCapLoadBoard's "Post a Load" page - the simple and efficient solution for brokers looking to connect with carriers and get their freight moving. By posting your load on our free platform, you can reach a wide network of carriers with the capacity to transport your goods. With NoCapLoadBoard, posting a load is easy and efficient. Simply click on the "Post a Load" button and fill out the required fields, including the origin, destination, weight, and any special instructions. Our platform is designed to help shippers and brokers connect quickly and easily with reliable carriers who can meet their transportation needs. Posting a load on our platform is completely free, making it an excellent choice for businesses looking to save on expenses. Our load board is also user-friendly and easy to navigate, which means you can get your freight moving quickly without any hassle.</p>
+          <p>Don't wait - post your load on NoCapLoadBoard today and connect with carriers who have the capacity to transport your goods efficiently and reliably. By using our platform, you can expand your carrier network, transport larger loads, and keep your business running smoothly.</p>
+        </section>
+          <a class="green" href="/broker/add_load">
+            <button class="button-85" role="button">Post a load</button>
+          </a>
+        {% endif %}
+        <br>
+        <br>
+      </div>
+    </main>
+
+    <footer id="footer ">
+      <nav id="nav_bar_footer" class="nav_bar ">
+        <div class="left_nav">
+          <h2><a href="/">NoCapLoadBoard</a></h2>
+        </div>
+        <ul class="right_nav">
+          <li>Contact me<i class="fa-solid fa-person-walking-arrow-right"></i></li>
+          <li><a href="mailto:laz@thisislaz.net?&subject=Hello!&body=Say hello!"><i class="fa-solid fa-envelope"></i></a></li> |
+          <li><a href="https://www.instagram.com/itsthejourneylak" target="_blank"><i class="fa-brands fa-instagram"></i></a></li> |
+          <li><a href="https:/www.linkedin.com/in/laz-alvarez/" target="_blank"><i class="fa-brands fa-linkedin"></i></a></li> |
+          <li><a href="https:/github.com/thisislaz" target="_blank"><i class="fa-brands fa-github"></i></a></li>
+        </ul>
+      </nav>
+    </footer>
+
+</body>
+<script src="/static/js/script.js"></script>
+
+</html>
