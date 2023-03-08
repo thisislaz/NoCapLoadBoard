@@ -133,6 +133,18 @@ body{
     flex-direction: column;
     align-items: stretch;
   }
+
+  .right_nav {
+    flex-direction:row;
+    gap: .2rem;
+    align-items: stretch;
+  }
+  
+  .right_nav a {
+    display: inline-flex;
+  }
+  
+
 }
 
 .white_bg{
@@ -620,3 +632,4 @@ ul.flashes li {
 .yellow:hover *{
   color: yellow;
 }
+
