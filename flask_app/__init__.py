@@ -1,9 +1,11 @@
 from flask import Flask, flash
 from flask_bcrypt import Bcrypt
 from datetime import datetime
-import re, requests, json
-from flask_app.config import constants as cons
+import re, requests, json, os
+from dotenv import load_dotenv
 
+def configure():
+  load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = "lookformeintheforest"
@@ -61,13 +63,14 @@ def remove_white_space(string):
 
 # if carrier does not exist it returns None
 def get_carrier(carrier_data):
+  configure()
   dot_number = carrier_data
 
-  res_dot = requests.get(f'https://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}?webKey={cons.API_KEY_SERVICE}')
+  res_dot = requests.get(f'https://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}?webKey={os.getenv("API_KEY_SERVICE")}')
   packages_json = res_dot.json()
   carrier = packages_json['content']
 
-  mc_res = requests.get(f'https://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}/docket-numbers?webKey={cons.API_KEY_SERVICE}')
+  mc_res = requests.get(f'https://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}/docket-numbers?webKey={os.getenv("API_KEY_SERVICE")}')
   mc_package = mc_res.json()
   mc = mc_package['content']
 
@@ -109,13 +112,15 @@ def get_carrier(carrier_data):
 
 #if broker does not exist it returns None
 def get_broker(carrier_data):
+  configure()
+
   dot_number = carrier_data
 
-  res_dot = requests.get(f'https://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}?webKey={cons.API_KEY_SERVICE}')
+  res_dot = requests.get(f'https://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}?webKey={os.getenv("API_KEY_SERVICE")}')
   packages_json = res_dot.json()
   carrier = packages_json['content']
 
-  mc_res = requests.get(f'https://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}/docket-numbers?webKey={cons.API_KEY_SERVICE}')
+  mc_res = requests.get(f'https://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}/docket-numbers?webKey={os.getenv("API_KEY_SERVICE")}')
   mc_package = mc_res.json()
   mc = mc_package['content']
 
