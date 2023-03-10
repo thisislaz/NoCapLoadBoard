@@ -7,7 +7,7 @@ EasyLoadBoard is a web-based application that allows freight brokers, shippers, 
 - User registration and login
 - Load posting and management
 - Load searching and filtering
-- Admin dashboard
+
 
 # Technologies Used
 EasyLoadBoard is built using the following technologies:
