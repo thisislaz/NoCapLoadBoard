@@ -7,7 +7,6 @@ from flask_app.models.carrier_address import CarrierAddress
 from flask_app.models.truck_model import Truck
 from datetime import datetime
 from flask_app import bcrypt
-import us
 
 #New user as a carrier form
 @app.route('/carrier/sign_up')

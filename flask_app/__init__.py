@@ -1,14 +1,12 @@
-from flask import Flask, flash
+from flask import Flask
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 import re, requests, json, os,dotenv
 
 dotenv.load_dotenv()
 key = os.environ.get('api_key')
-print(type(key))
 
 app = Flask(__name__)
-app.secret_key = "lookformeintheforest"
 DATABASE = "loadboard"
 bcrypt = Bcrypt(app)
 EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$")
@@ -63,7 +61,6 @@ def remove_white_space(string):
 
 # if carrier does not exist it returns None
 def get_carrier(carrier_data):
-
 
   dot_number = carrier_data
 

@@ -12,7 +12,6 @@ from flask_app.models.truck_encoder import TruckEncoder
 from datetime import datetime
 from flask_app import bcrypt
 from flask import json
-import us
 
 @app.route('/broker/sign_up')
 def new_broker_user():
