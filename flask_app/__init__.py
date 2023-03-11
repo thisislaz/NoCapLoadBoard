@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,flash
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 import re, requests, json, os,dotenv
@@ -64,11 +64,11 @@ def get_carrier(carrier_data):
 
   dot_number = carrier_data
 
-  res_dot = requests.get(f'https://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}?webKey={key}')
+  res_dot = requests.get(f'http://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}?webKey={key}')
   packages_json = res_dot.json()
   carrier = packages_json['content']
 
-  mc_res = requests.get(f'https://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}/docket-numbers?webKey={key}')
+  mc_res = requests.get(f'http://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}/docket-numbers?webKey={key}')
   mc_package = mc_res.json()
   mc = mc_package['content']
 
@@ -113,11 +113,11 @@ def get_broker(carrier_data):
 
   dot_number = carrier_data
 
-  res_dot = requests.get(f'https://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}?webKey={key}')
+  res_dot = requests.get(f'http://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}?webKey={key}')
   packages_json = res_dot.json()
   carrier = packages_json['content']
 
-  mc_res = requests.get(f'https://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}/docket-numbers?webKey={key}')
+  mc_res = requests.get(f'http://mobile.fmcsa.dot.gov/qc/services/carriers/{dot_number}/docket-numbers?webKey={key}')
   mc_package = mc_res.json()
   mc = mc_package['content']
 
