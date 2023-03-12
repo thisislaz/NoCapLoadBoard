@@ -5,8 +5,9 @@ import re, requests, json, os,dotenv
 
 dotenv.load_dotenv()
 key = os.environ.get('api_key')
-
 app = Flask(__name__)
+app.secret_key=os.environ.get('app_secret')
+
 DATABASE = "loadboard"
 bcrypt = Bcrypt(app)
 EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$")
